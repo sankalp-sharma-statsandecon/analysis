@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canada vs U.S. Farm Support</title>
+<meta name="description" content="OECD 2026 data: once dairy and sugar price support are removed, U.S. farmers receive about 40% more taxpayer support per dollar of receipts than Canadian farmers, and nearly twice as much in grains and oilseeds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --page: #ffffff;
+  --surface-1: #fcfcfb;
+  --ink: #1f1f1f;
+  --ink-body: #363737;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --rule: #e6e6e6;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --wash: #f6f5f2;
+  --accent: #2a78d6;
+  --series-1: #2a78d6;   /* Canada */
+  --series-2: #eb6834;   /* United States */
+  --tip-bg: #0b0b0b;
+  --tip-ink: #f0efec;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #121211;
+    --surface-1: #1a1a19;
+    --ink: #f0efec;
+    --ink-body: #dcdbd6;
+    --ink-2: #c3c2b7;
+    --muted: #898781;
+    --rule: #2c2c2a;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --wash: #1a1a19;
+    --accent: #3987e5;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --tip-bg: #f0efec;
+    --tip-ink: #0b0b0b;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #121211;
+  --surface-1: #1a1a19;
+  --ink: #f0efec;
+  --ink-body: #dcdbd6;
+  --ink-2: #c3c2b7;
+  --muted: #898781;
+  --rule: #2c2c2a;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --wash: #1a1a19;
+  --accent: #3987e5;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --tip-bg: #f0efec;
+  --tip-ink: #0b0b0b;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink-body);
+  font-family: "Spectral", Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  line-height: 1.6;
+}
+.sans, figure, table, .byline, .kicker, .stats, .note, .sources, .tnote, footer {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+}
+article {
+  max-width: 728px;
+  margin: 0 auto;
+  padding: 56px 16px 80px;
+}
+.kicker {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 12px;
+}
+h1 {
+  font-family: "Spectral", Georgia, serif;
+  font-size: 40px;
+  line-height: 1.15;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 12px;
+  letter-spacing: -0.01em;
+}
+.subtitle {
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  margin: 0 0 24px;
+}
+.byline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 36px;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 14px; flex: none;
+}
+.byline strong { color: var(--ink); font-weight: 600; display: block; }
+h2 {
+  font-family: "Spectral", Georgia, serif;
+  font-size: 28px;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 48px 0 12px;
+}
+p { margin: 0 0 22px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+strong { color: var(--ink); }
+
+/* Stat strip */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 8px 0 36px;
+}
+.stat {
+  background: var(--wash);
+  border-radius: 8px;
+  padding: 16px;
+}
+.stat .label { font-size: 13px; color: var(--ink-2); line-height: 1.35; min-height: 36px; }
+.stat .pair { display: flex; gap: 14px; align-items: baseline; margin-top: 8px; flex-wrap: wrap; }
+.stat .num { font-size: 28px; font-weight: 650; color: var(--ink); line-height: 1.1; }
+.stat .who { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
+.dot.s1 { background: var(--series-1); }
+.dot.s2 { background: var(--series-2); }
+
+/* Charts */
+figure.chart {
+  margin: 32px 0 36px;
+  background: var(--surface-1);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 20px 20px 14px;
+  position: relative;
+}
+.chart .ctitle { font-size: 16px; font-weight: 600; color: var(--ink); margin: 0 0 2px; line-height: 1.35; }
+.chart .csub { font-size: 13px; color: var(--ink-2); margin: 0 0 14px; line-height: 1.4; }
+.legend { display: flex; gap: 18px; font-size: 13px; color: var(--ink-2); margin-bottom: 12px; flex-wrap: wrap; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend .key { width: 12px; height: 12px; border-radius: 3px; }
+.plot { position: relative; }
+.grp { margin-bottom: 14px; }
+.glabel { font-size: 14px; color: var(--ink); margin-bottom: 6px; line-height: 1.3; }
+.track { position: relative; height: 20px; margin-bottom: 2px; margin-right: 48px; }
+.axis { margin-right: 48px; }
+.gridline { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--grid); }
+.gridline.zero { background: var(--axis); }
+.bar {
+  position: absolute; left: 0; top: 0; height: 20px;
+  border-radius: 0 4px 4px 0;
+  outline: none;
+  cursor: default;
+}
+.bar.s1 { background: var(--series-1); }
+.bar.s2 { background: var(--series-2); }
+.bar:focus-visible { box-shadow: 0 0 0 2px var(--surface-1), 0 0 0 4px var(--ink); }
+.val {
+  position: absolute; top: 0; line-height: 20px;
+  font-size: 13px; color: var(--ink-2); white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.axis { position: relative; height: 18px; margin-top: 2px; }
+.tick { position: absolute; transform: translateX(-50%); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chart .src { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.45; }
+.tooltip {
+  position: absolute; pointer-events: none; z-index: 5;
+  background: var(--tip-bg); color: var(--tip-ink);
+  font-size: 13px; line-height: 1.4;
+  padding: 8px 10px; border-radius: 6px;
+  max-width: 260px; opacity: 0; transition: opacity .1s;
+}
+.tooltip.on { opacity: 1; }
+.tooltip b { font-weight: 600; }
+
+/* Tables */
+.tablewrap { overflow-x: auto; margin: 8px 0 32px; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.4; }
+caption { text-align: left; font-size: 16px; font-weight: 600; color: var(--ink); padding-bottom: 8px; }
+th, td { padding: 9px 10px; border-bottom: 1px solid var(--rule); text-align: right; vertical-align: top; }
+th:first-child, td:first-child { text-align: left; padding-left: 0; }
+thead th { font-size: 13px; font-weight: 600; color: var(--ink-2); border-bottom: 1px solid var(--axis); }
+td { font-variant-numeric: tabular-nums; color: var(--ink-body); }
+tr.em td { font-weight: 600; color: var(--ink); }
+.tnote { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.45; }
+
+blockquote {
+  margin: 28px 0;
+  padding: 2px 0 2px 20px;
+  border-left: 3px solid var(--accent);
+  font-size: 22px;
+  line-height: 1.45;
+  color: var(--ink);
+  font-style: italic;
+}
+
+details.chartdata { margin-top: 10px; font-size: 13px; color: var(--ink-2); }
+details.chartdata summary { cursor: pointer; color: var(--muted); }
+details.chartdata table { font-size: 13px; margin-top: 6px; }
+
+.note {
+  background: var(--wash);
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin: 44px 0 28px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.note h3 { font-size: 16px; margin: 0 0 10px; color: var(--ink); }
+.note ul { margin: 0; padding-left: 18px; }
+.note li { margin-bottom: 8px; }
+.sources { font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.sources h3 { font-size: 16px; color: var(--ink); margin: 0 0 8px; }
+.sources ol { padding-left: 20px; margin: 0; }
+.sources li { margin-bottom: 6px; }
+footer { border-top: 1px solid var(--rule); margin-top: 40px; padding-top: 16px; font-size: 13px; color: var(--muted); }
+
+@media (max-width: 640px) {
+  body { font-size: 18px; }
+  article { padding-top: 32px; }
+  h1 { font-size: 31px; }
+  .subtitle { font-size: 19px; }
+  h2 { font-size: 24px; }
+  .stats { grid-template-columns: 1fr; }
+  .stat .label { min-height: 0; }
+  figure.chart { padding: 16px 14px 12px; }
+  blockquote { font-size: 19px; }
+}
+@media print {
+  .tooltip { display: none; }
+  figure.chart { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<article>
+
+  <h1>Take out dairy and sugar, and U.S. farmers get 40% more taxpayer support</h1>
+  <p class="subtitle">The OECD's 2026 numbers put farm support in Canada and the United States at about 8% of receipts. Count only what taxpayers pay outside supply management, and the gap opens: nearly two to one for grains and oilseeds.</p>
+
+  <div class="stats" role="list">
+    <div class="stat" role="listitem">
+      <div class="label">Taxpayer support outside supply management, % of receipts (2023–25)</div>
+      <div class="pair">
+        <div><div class="num">5.2%</div><div class="who"><i class="dot s1"></i>Canada</div></div>
+        <div><div class="num">7.4%</div><div class="who"><i class="dot s2"></i>U.S.</div></div>
+      </div>
+    </div>
+    <div class="stat" role="listitem">
+      <div class="label">Crop-specific support for grains &amp; oilseeds, % of receipts (2023–25)</div>
+      <div class="pair">
+        <div><div class="num">3.7%</div><div class="who"><i class="dot s1"></i>Canada</div></div>
+        <div><div class="num">7.0%</div><div class="who"><i class="dot s2"></i>U.S.</div></div>
+      </div>
+    </div>
+    <div class="stat" role="listitem">
+      <div class="label">Taxpayer support outside supply management, % of receipts (2025)</div>
+      <div class="pair">
+        <div><div class="num">4.4%</div><div class="who"><i class="dot s1"></i>Canada</div></div>
+        <div><div class="num">9.1%</div><div class="who"><i class="dot s2"></i>U.S.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <p>Every year the OECD measures how much governments support their farmers. In its 2026 report, Canada and the United States look almost identical: producer support worth 7.6% of gross farm receipts in Canada and 8.0% in the U.S., averaged over 2023–25.</p>
+
+  <p>That comparison mixes two different kinds of support. Part of each number is <strong>market price support</strong>: the extra that consumers pay when border controls hold domestic prices above world prices. In Canada, most of it is dairy under supply management. In the U.S., the largest single piece is sugar. Grain and oilseed farmers on either side of the border don't receive this money. The support that reaches them comes from government budgets.</p>
+
+  <h2>Taxpayer support only</h2>
+
+  <p>Removing market price support, worth USD 1.9 billion a year in Canada and USD 3.0 billion in the U.S., leaves <strong>taxpayer-funded payments</strong>: money paid to farmers from government budgets, including direct payments, insurance premium subsidies and tax concessions such as fuel-tax exemptions. These equal 5.0% of receipts in Canada and 7.4% in the U.S.</p>
+
+  <p>The next step removes the supply-managed sectors altogether. On the Canadian side, that means the taxpayer-funded payments that go to dairy, poultry and egg farms, including the Dairy Direct Payment Program, which compensates dairy farmers for market access granted under CETA and CPTPP (2019–23) and CUSMA (2023–29). On the U.S. side it means sugar. The rest of the farm sector is then compared on its own receipts. Canada's figure edges up to 5.2%, because supply-managed farms receive most of their support through prices, not taxpayer-funded payments. The U.S. figure stays at 7.4%.</p>
+
+  <figure class="chart" id="chart1" aria-labelledby="c1t">
+    <p class="ctitle" id="c1t">The headline looks even. Taxpayer support doesn't.</p>
+    <p class="csub">Producer support as % of gross farm receipts, 2023–25 average</p>
+    <div class="legend"><span><i class="key" style="background:var(--series-1)"></i>Canada</span><span><i class="key" style="background:var(--series-2)"></i>United States</span></div>
+    <div class="plot" data-max="10" data-ticks="0,2,4,6,8,10"></div>
+    <p class="src">Source: OECD Producer Support Estimates database (2026 edition); GFO calculations. Supply-managed sectors: milk, poultry and eggs (Canada); sugar (U.S.).</p>
+    <details class="chartdata"><summary>Show data</summary><div class="tablewrap" style="margin:0"></div></details>
+  </figure>
+
+  <div class="tablewrap">
+  <table>
+    <caption>From the OECD headline to taxpayer support outside supply management</caption>
+    <thead><tr><th>2023–25 average, USD</th><th>Canada</th><th>United States</th></tr></thead>
+    <tbody>
+      <tr><td>Producer support (OECD headline)</td><td>$5.46B · 7.6%</td><td>$42.5B · 8.0%</td></tr>
+      <tr><td>less market price support</td><td>−$1.89B</td><td>−$2.98B</td></tr>
+      <tr class="em"><td>Taxpayer-funded payments</td><td>$3.58B · 5.0%</td><td>$39.5B · 7.4%</td></tr>
+      <tr><td>less payments to supply-managed sectors</td><td>−$0.43B</td><td>−$0.29B</td></tr>
+      <tr class="em"><td>Taxpayer support outside supply management</td><td>$3.15B · 5.2%</td><td>$39.2B · 7.4%</td></tr>
+    </tbody>
+  </table>
+  <p class="tnote">Percentages are shares of OECD gross farm receipts: the value of production plus taxpayer-funded payments. In the last row the base is non-supply-managed receipts only. Canada's USD 3.15B is about CAD 4.3B.</p>
+  </div>
+
+  <p>Per dollar of receipts, U.S. farmers outside supply management receive about 40% more taxpayer support than their Canadian counterparts. In absolute terms, that is USD 39 billion a year in the U.S. against USD 3.2 billion in Canada.</p>
+
+  <h2>Grains and oilseeds: close to two to one</h2>
+
+  <p>The gap is widest in the crops Ontario grows. Looking only at payments the OECD ties to a specific crop, U.S. corn receives 6.9% of its receipts against 2.1% in Canada. Soybeans are 5.6% against 1.9%, and wheat 12.0% against 4.0%. Barley is the exception, with Canada slightly ahead. Across grains and oilseeds as a group, crop-specific support is 7.0% in the U.S. and 3.7% in Canada.</p>
+
+  <figure class="chart" id="chart2" aria-labelledby="c2t">
+    <p class="ctitle" id="c2t">U.S. corn, soybeans and wheat receive roughly three times the crop-specific support</p>
+    <p class="csub">Taxpayer payments tied to a single crop, % of that crop's gross receipts, 2023–25 average</p>
+    <div class="legend"><span><i class="key" style="background:var(--series-1)"></i>Canada</span><span><i class="key" style="background:var(--series-2)"></i>United States</span></div>
+    <div class="plot" data-max="14" data-ticks="0,2,4,6,8,10,12,14"></div>
+    <p class="src">Source: OECD Producer Support Estimates database (2026 edition), single commodity transfers excluding market price support. Grains &amp; oilseeds: corn, soybeans, wheat, barley, canola and oats (Canada); corn, soybeans, wheat, barley and sorghum (U.S.).</p>
+    <details class="chartdata"><summary>Show data</summary><div class="tablewrap" style="margin:0"></div></details>
+  </figure>
+
+  <p>Crop-specific payments don't capture everything. Canada's AgriStability and AgriInvest pay out at the whole-farm level, as do several U.S. programs. Assigning grains and oilseeds their share of those whole-farm payments raises the totals to roughly 6.2% in Canada and 11.1% in the U.S. The ratio barely moves.</p>
+
+  <blockquote>Per dollar of receipts, a U.S. corn, soybean or wheat grower receives about three times the crop-specific taxpayer support of a Canadian one.</blockquote>
+
+  <h2>The gap is widening</h2>
+
+  <div class="tablewrap">
+  <table>
+    <caption>Taxpayer support outside supply management, % of receipts</caption>
+    <thead><tr><th></th><th>2023</th><th>2024</th><th>2025 (prov.)</th></tr></thead>
+    <tbody>
+      <tr><td><i class="dot s1" style="margin-right:8px"></i>Canada</td><td>5.9%</td><td>5.4%</td><td>4.4%</td></tr>
+      <tr><td><i class="dot s2" style="margin-right:8px"></i>United States</td><td>6.3%</td><td>6.8%</td><td>9.1%</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>In 2025, U.S. support jumped on the back of emergency spending. The Emergency Commodity Assistance Program, which is included in the 2025 figures, paid USD 10 billion, on a per-acre basis, to offset 2024's low prices and high input costs. The Supplemental Disaster Relief Program made USD 16 billion available for 2023 and 2024 weather losses. Canadian support fell over the same period.</p>
+
+  <p><strong>None of these figures include the U.S. aid that followed.</strong> In December 2025, USDA announced USD 12 billion for 2025 losses, paid in 2026, including up to USD 11 billion for row-crop farmers through the Farmer Bridge Assistance Program. In October 2026 it announced another USD 8 billion through the Harvest Fuel Relief program: one-time payments covering part of modelled 2026 crop-year losses from higher input costs and market disruption. Together, that is USD 20 billion outside the OECD data, about half of the USD 39 billion a year in U.S. taxpayer support measured here. The One Big Beautiful Bill Act also raised the reference prices behind the ARC and PLC programs and increased crop insurance premium subsidies.</p>
+
+  <h2>How the money is delivered</h2>
+
+  <p>The two systems also deliver support differently. In Canada, payments based on current acres and animals, which include crop insurance, make up 46% of taxpayer-funded producer support. Payments based on farm receipts or income, which include AgriStability and AgriInvest, make up a further 25%. The U.S. relies more on payments linked to inputs and on-farm services, which make up 39% of its support. It also pays farmers to retire land through the Conservation Reserve Program, a category Canada doesn't have.</p>
+
+  <div class="tablewrap">
+  <table>
+    <caption>Taxpayer-funded producer support by delivery method, 2023–25 average</caption>
+    <thead><tr><th>Share of taxpayer-funded producer support</th><th>Canada</th><th>United States</th></tr></thead>
+    <tbody>
+      <tr><td>Based on current acres or animals</td><td>46%</td><td>37%</td></tr>
+      <tr><td>Based on current farm receipts or income</td><td>25%</td><td>16%</td></tr>
+      <tr><td>Based on input use and on-farm services</td><td>22%</td><td>39%</td></tr>
+      <tr><td>Not tied to current production</td><td>5%</td><td>1%</td></tr>
+      <tr><td>Land retirement and other non-commodity</td><td>0%</td><td>7%</td></tr>
+    </tbody>
+  </table>
+  <p class="tnote">Source: OECD PSE database, 2026 edition. Shares may not sum to 100 due to rounding.</p>
+  </div>
+
+  <h2>Two comparisons that mislead</h2>
+
+  <p><strong>Support as a share of GDP.</strong> Measured against the whole economy, Canada spends more: taxpayer support to farmers, including research, inspection and other general services, equals 0.25% of GDP in Canada and 0.19% in the U.S. That reflects the size of agriculture, not the generosity of support: farming is 1.7% of Canada's GDP and 1.0% of the U.S. economy. Per dollar of farm output, the U.S. spends more.</p>
+
+  <p><strong>Total U.S. agricultural spending.</strong> The OECD puts total U.S. budgetary support to agriculture at USD 123 billion a year. More than half of that, USD 68 billion, is food assistance to consumers, mainly SNAP. It doesn't reach farmers and is excluded from every figure above.</p>
+
+  <h2>What this means</h2>
+
+  <p>Canadian and U.S. grain and oilseed farmers sell into the same North American and world markets. On the OECD's own numbers, the U.S. grower receives close to twice the taxpayer support per dollar of receipts, and three times as much in support tied directly to corn, soybeans and wheat. The headline comparison hides this, because Canada's dairy price support fills in the Canadian total. That support never reaches a grain farm.</p>
+
+  <div class="note">
+    <h3>How the numbers were built</h3>
+    <ul>
+      <li>All figures are from the OECD Producer Support Estimates database (2026 edition), averaged over 2023–25 and expressed in U.S. dollars at OECD exchange rates. 2025 values are provisional.</li>
+      <li>Taxpayer-funded payments are the OECD Producer Support Estimate minus market price support. Percentages are shares of OECD gross farm receipts.</li>
+      <li>Supply-managed sectors (milk, poultry and eggs in Canada; sugar in the U.S.) are removed with their market price support, their crop- or product-specific payments and, for Canada, the Dairy Direct Payment Program. The base is the value of production of all other commodities.</li>
+      <li>Whole-farm payments are divided as follows. AgriInvest excludes supply-managed commodities under its program guidelines, so none of it is assigned to those sectors. The supply-managed share of AgriStability (about 4%) is based on Agricorp's sector-level payouts in Ontario. Other whole-farm payments are split by value of production. Under alternative assumptions, Canada's figure ranges from 5.2% to 5.5%.</li>
+      <li>Research, inspection, infrastructure and other general services are excluded from producer support figures, as is consumer food assistance.</li>
+    </ul>
+  </div>
+
+  <div class="sources">
+    <h3>Sources</h3>
+    <ol>
+      <li>OECD (2026), <a href="https://doi.org/10.1787/2c7f3be1-en"><em>Agricultural Policy Monitoring and Evaluation 2026</em></a>, chapters 6 (Canada) and 30 (United States).</li>
+      <li>OECD, <a href="https://data-explorer.oecd.org/">Producer and Consumer Support Estimates database</a>, 2026 edition.</li>
+      <li>Statistics Canada, <a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3210010601">Table 32-10-0106-01, Direct payments to agriculture producers</a>.</li>
+      <li>Agriculture and Agri-Food Canada, <a href="https://agriculture.canada.ca/en/programs/agriinvest/resources/agriinvest-consolidated-program-guidelines-sustainable-canadian-agricultural-partnership">AgriInvest Consolidated Program Guidelines (Sustainable CAP)</a>, sections 4.1–4.2.</li>
+      <li>Agricorp, annual reports <a href="https://www.agricorp.com/SiteCollectionDocuments/Agricorp-AnnualReport-2023-en.pdf">2022–23</a>, <a href="https://www.agricorp.com/SiteCollectionDocuments/Agricorp-AnnualReport-2024-en.pdf">2023–24</a> and <a href="https://www.agricorp.com/SiteCollectionDocuments/Agricorp-AnnualReport-2025-en.pdf">2024–25</a>.</li>
+      <li>USDA, <a href="https://www.usda.gov/about-usda/news/press-releases/2026/10/19/trump-administration-announces-8-billion-harvest-fuel-relief-program">Trump Administration Announces $8 Billion Harvest Fuel Relief Program</a>, 19 October 2026; see also <a href="https://www.dtnpf.com/agriculture/web/ag/news/business-inputs/article/2026/10/20/rollins-announces-8-billion-harvest">DTN, 20 October 2026</a>.</li>
+    </ol>
+  </div>
+
+</article>
+
+<div class="tooltip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  var SERIES = [
+    { key: 'ca', name: 'Canada', cls: 's1' },
+    { key: 'us', name: 'United States', cls: 's2' }
+  ];
+  var DATA = {
+    chart1: {
+      unit: 'of gross farm receipts',
+      rows: [
+        { label: 'OECD headline producer support', ca: 7.6, us: 8.0, caNote: 'USD 5.46B', usNote: 'USD 42.5B' },
+        { label: 'Taxpayer-funded payments only', ca: 5.0, us: 7.4, caNote: 'USD 3.58B', usNote: 'USD 39.5B' },
+        { label: 'Taxpayer support outside supply management', ca: 5.2, us: 7.4, caNote: 'USD 3.15B', usNote: 'USD 39.2B' }
+      ]
+    },
+    chart2: {
+      unit: 'of crop receipts',
+      rows: [
+        { label: 'Corn', ca: 2.1, us: 6.9 },
+        { label: 'Soybeans', ca: 1.9, us: 5.6 },
+        { label: 'Wheat', ca: 4.0, us: 12.0 },
+        { label: 'Barley', ca: 5.8, us: 5.1 },
+        { label: 'All grains & oilseeds', ca: 3.7, us: 7.0 }
+      ]
+    }
+  };
+
+  var tip = document.getElementById('tip');
+  function fmt(v) { return v.toFixed(1) + '%'; }
+
+  function showTip(el, html) {
+    tip.innerHTML = html;
+    tip.classList.add('on');
+    var r = el.getBoundingClientRect();
+    var tw = tip.offsetWidth, th = tip.offsetHeight;
+    var x = window.scrollX + r.right + 10;
+    if (x + tw > window.scrollX + document.documentElement.clientWidth - 8) {
+      x = window.scrollX + r.right - tw;
+    }
+    x = Math.max(window.scrollX + 8, x);
+    var y = window.scrollY + r.top - th - 8;
+    if (y < window.scrollY + 4) y = window.scrollY + r.bottom + 8;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  }
+  function hideTip() { tip.classList.remove('on'); }
+
+  Object.keys(DATA).forEach(function (id) {
+    var fig = document.getElementById(id);
+    var plot = fig.querySelector('.plot');
+    var max = parseFloat(plot.dataset.max);
+    var ticks = plot.dataset.ticks.split(',').map(Number);
+    var d = DATA[id];
+
+    d.rows.forEach(function (row) {
+      var g = document.createElement('div');
+      g.className = 'grp';
+      var lab = document.createElement('div');
+      lab.className = 'glabel';
+      lab.textContent = row.label;
+      g.appendChild(lab);
+      SERIES.forEach(function (s) {
+        var v = row[s.key];
+        var tr = document.createElement('div');
+        tr.className = 'track';
+        var gl = document.createElement('div');
+        gl.className = 'gridline zero';
+        gl.style.left = '0';
+        tr.appendChild(gl);
+        var b = document.createElement('div');
+        b.className = 'bar ' + s.cls;
+        b.style.width = (v / max * 100) + '%';
+        b.tabIndex = 0;
+        var note = row[s.key + 'Note'];
+        var aria = s.name + ', ' + row.label + ': ' + fmt(v) + ' ' + d.unit + (note ? ' (' + note + ')' : '');
+        b.setAttribute('role', 'img');
+        b.setAttribute('aria-label', aria);
+        var html = '<b>' + s.name + '</b><br>' + row.label + '<br>' + fmt(v) + ' ' + d.unit + (note ? '<br>' + note + ' a year' : '');
+        b.addEventListener('mouseenter', function () { showTip(b, html); });
+        b.addEventListener('mouseleave', hideTip);
+        b.addEventListener('focus', function () { showTip(b, html); });
+        b.addEventListener('blur', hideTip);
+        tr.appendChild(b);
+        var val = document.createElement('span');
+        val.className = 'val';
+        val.textContent = fmt(v);
+        val.style.left = 'calc(' + (v / max * 100) + '% + 6px)';
+        val.setAttribute('aria-hidden', 'true');
+        tr.appendChild(val);
+        g.appendChild(tr);
+      });
+      plot.appendChild(g);
+    });
+
+    var ax = document.createElement('div');
+    ax.className = 'axis';
+    ax.setAttribute('aria-hidden', 'true');
+    ticks.forEach(function (t) {
+      var tk = document.createElement('span');
+      tk.className = 'tick';
+      tk.style.left = (t / max * 100) + '%';
+      tk.textContent = t + '%';
+      ax.appendChild(tk);
+    });
+    plot.appendChild(ax);
+
+    // data table view
+    var wrap = fig.querySelector('details .tablewrap');
+    var t = '<table><thead><tr><th></th><th>Canada</th><th>United States</th></tr></thead><tbody>';
+    d.rows.forEach(function (row) {
+      t += '<tr><td>' + row.label.replace('&', '&amp;') + '</td><td>' + fmt(row.ca) + '</td><td>' + fmt(row.us) + '</td></tr>';
+    });
+    wrap.innerHTML = t + '</tbody></table>';
+  });
+
+  window.addEventListener('scroll', hideTip, { passive: true });
+})();
+</script>
+</body>
+</html>
