@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Preview Card Source</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root { --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781; --axis:#c3c2b7; --s1:#2a78d6; --s2:#eb6834; }
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1200px; height: 627px; overflow: hidden; background: #ffffff; }
+body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); }
+.card { width: 1200px; height: 627px; padding: 46px 64px 34px; display: flex; flex-direction: column; border-top: 10px solid var(--s1); }
+.meta { font-size: 20px; color: var(--ink-2); letter-spacing: .01em; }
+h1 { font-family: "Spectral", Georgia, serif; font-size: 46px; line-height: 1.12; font-weight: 700; margin: 10px 0 22px; max-width: 1060px; }
+.legend { display: flex; gap: 28px; font-size: 20px; color: var(--ink-2); margin-bottom: 14px; }
+.legend span { display: inline-flex; align-items: center; gap: 9px; }
+.key { width: 16px; height: 16px; border-radius: 4px; display: inline-block; }
+.rows { display: flex; flex-direction: column; gap: 32px; }
+.grp { display: grid; grid-template-columns: 330px 1fr; align-items: center; column-gap: 20px; }
+.glabel { font-size: 21px; font-weight: 600; line-height: 1.2; color: var(--ink); }
+.glabel small { display: block; font-weight: 400; font-size: 16px; color: var(--muted); margin-top: 2px; }
+.bars { border-left: 2px solid var(--axis); display: flex; flex-direction: column; gap: 4px; padding: 2px 0; }
+.row { display: flex; align-items: center; gap: 10px; height: 24px; }
+.bar { height: 24px; border-radius: 0 4px 4px 0; }
+.bar.s1 { background: var(--s1); } .bar.s2 { background: var(--s2); }
+.val { font-size: 19px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.val b { color: var(--ink); font-weight: 650; }
+.foot { margin-top: auto; display: flex; justify-content: space-between; font-size: 15px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="meta">Taxpayer-funded farm support, % of gross farm receipts, 2023–25 average</div>
+  <h1>Take out dairy and sugar, and U.S. farmers get 40% more taxpayer support</h1>
+  <div class="legend"><span><i class="key" style="background:var(--s1)"></i>Canada</span><span><i class="key" style="background:var(--s2)"></i>United States</span></div>
+  <div class="rows" id="rows"></div>
+  <div class="foot"><span>Source: OECD Producer Support Estimates database, 2026 edition</span><span>Excludes U.S. aid announced since Dec 2025</span></div>
+</div>
+<script>
+var max = 8, px = 700;
+var data = [
+  { l: 'All farms', s: 'outside supply management', ca: 5.2, us: 7.4 },
+  { l: 'Grains & oilseeds', s: 'crop-specific support', ca: 3.7, us: 7.0 },
+  { l: 'Corn', s: 'crop-specific support', ca: 2.1, us: 6.9 }
+];
+var h = '';
+data.forEach(function (d) {
+  h += '<div class="grp"><div class="glabel">' + d.l.replace('&', '&amp;') + '<small>' + d.s + '</small></div><div class="bars">' +
+    '<div class="row"><div class="bar s1" style="width:' + (d.ca / max * px) + 'px"></div><span class="val"><b>' + d.ca.toFixed(1) + '%</b></span></div>' +
+    '<div class="row"><div class="bar s2" style="width:' + (d.us / max * px) + 'px"></div><span class="val"><b>' + d.us.toFixed(1) + '%</b></span></div>' +
+    '</div></div>';
+});
+document.getElementById('rows').innerHTML = h;
+</script>
+</body>
+</html>
